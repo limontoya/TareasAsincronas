@@ -10,9 +10,18 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:text="hola"
+        android:text="Hola"
+        android:layout_width="match_parent"
+        android:textSize="16pt"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/reloj"/>
+
+    <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"/>
+        android:text="Iniciar reloj"
+        android:onClick="mostrarMensaje"/>
 
 </LinearLayout>
