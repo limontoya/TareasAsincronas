@@ -36,6 +36,9 @@ public class MainActivity extends Activity {
      */
     public class TareaAsincrona extends AsyncTask<Void, String, Void>{
 
+        boolean isAlive = true;
+        int contador = 0;
+
         /**
          * Sets a message before excecuting the task
          */
@@ -53,15 +56,12 @@ public class MainActivity extends Activity {
          */
         @Override
         protected Void doInBackground(Void... params) {
-            delay(1000);
-            //show message on gui
-            publishProgress("Primer segundo");
 
-            delay(1000);
-            publishProgress("Segundo segundo");
-            delay(1000);
-            publishProgress("Tercer segundo");
-            delay(1000);
+            while (isAlive){
+                publishProgress(""+contador);
+                delay(1000);
+                contador++;
+            }
 
             return null;
         }
