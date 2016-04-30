@@ -2,6 +2,8 @@ package montoyalinaj.tareasasincronas;
 
 import android.app.Activity;
 import android.os.AsyncTask;
+import android.os.Environment;
+import android.os.Vibrator;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
@@ -11,8 +13,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLConnection;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -154,11 +161,45 @@ public class MainActivity extends Activity {
 
             try {
                 URL url = new URL(str_url);
+                URLConnection connection = url.openConnection();
+                connection.connect();
+                //Receive all bytes
+                InputStream inputStream = connection.getInputStream();
+
+                File carpeta_descarga = new File(Environment.getExternalStorageDirectory()+"/tareasAsincronas");
+
+                //Create directories if folder does not exist
+                if(!carpeta_descarga.exists()){
+                    carpeta_descarga.mkdirs();
+                }
+
+                File archivo_descargado = new File(carpeta_descarga+"/archivo.pdf");
+
+                FileOutputStream fileOutputStream = new FileOutputStream(archivo_descargado);
+
+                //Set bytes to read
+                int bytesLeidos = 0;
+                byte [] buffer = new byte[1024];
+
+                //Read bytes
+                while ( (bytesLeidos=inputStream.read(buffer)) != -1){
+                    //write from buffer, starting on zero, to the bytes read
+                    fileOutputStream.write(buffer, 0, bytesLeidos);
+                }
+                //Close streams
+                inputStream.close();
+                fileOutputStream.close();
+
+                //Return
+                return "OK";
+
             } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
                 e.printStackTrace();
             }
 
-            return null;
+            return "BAD";
         }
 
         @Override
@@ -170,9 +211,19 @@ public class MainActivity extends Activity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            salida.setText("Ha terminado la descarga");
-            boton_descarga.setText("Descarga finalizada");
-            boton_descarga.setEnabled(true);
+            if(s.equals("OK")){
+                salida.setText("Ha terminado la descarga");
+                boton_descarga.setText("Iniciar Descarga");
+                boton_descarga.setEnabled(true);
+
+                Vibrator vibrator = (Vibrator) getSystemService(VIBRATOR_SERVICE);
+                vibrator.vibrate(1000);
+            }
+            else{
+                salida.setText("Ha fallado la descarga");
+                boton_descarga.setText("Iniciar Descarga");
+                boton_descarga.setEnabled(true);
+            }
         }
     }
 
