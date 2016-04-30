@@ -7,21 +7,31 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 
 public class MainActivity extends Activity {
 
     TextView reloj;
+    TextView salida;
+    Button boton_descarga;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //Reference to id created on xml: R id reloj
+        //Reference to id created on xml: R id
         reloj = (TextView) findViewById(R.id.reloj);
+        salida = (TextView) findViewById(R.id.salida);
+        boton_descarga = (Button) findViewById(R.id.boton_descarga);
     }
 
     public void mostrarMensaje(View view) {
@@ -29,6 +39,15 @@ public class MainActivity extends Activity {
 
         TareaAsincrona tarea = new TareaAsincrona();
         tarea.execute();
+    }
+
+    /**
+     * Start download
+     * @param view
+     */
+    public void iniciarDescarga(View view) {
+        DescargarArchivo descargarArchivo = new DescargarArchivo();
+        descargarArchivo.execute("https://docs.oracle.com/javase/specs/jls/se7/jls7.pdf");
     }
 
     /**
@@ -58,9 +77,17 @@ public class MainActivity extends Activity {
         protected Void doInBackground(Void... params) {
 
             while (isAlive){
-                publishProgress(""+contador);
+
+                Calendar calendar = new GregorianCalendar();//= new Calendar.getInstance();
+                String year   = ""+calendar.get(Calendar.YEAR);
+                String month  = ""+calendar.get(Calendar.MONTH);
+                String day    = ""+calendar.get(Calendar.DAY_OF_MONTH);
+                String hour   = ""+calendar.get(Calendar.HOUR_OF_DAY);
+                String minute = ""+calendar.get(Calendar.MINUTE);
+                String second = ""+calendar.get(Calendar.SECOND);
+
+                publishProgress(year + " - " + month +" - "+ day +"\n "+ hour +" : "+ minute +" : "+ second);
                 delay(1000);
-                contador++;
             }
 
             return null;
@@ -102,4 +129,51 @@ public class MainActivity extends Activity {
             reloj.setText("Ha finalizado el proceso");
         }
     }
+
+    /**
+     * Download a file
+     */
+    public class DescargarArchivo extends AsyncTask<String, String, String>{
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            salida.setText("Ha iniciado la descarga");
+            boton_descarga.setText("Descarga en progreso");
+            boton_descarga.setEnabled(false);
+        }
+
+        /**
+         * Receive the file to download
+         * @param params
+         * @return
+         */
+        @Override
+        protected String doInBackground(String... params) {
+            String str_url = params[0];
+
+            try {
+                URL url = new URL(str_url);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(String... values) {
+            super.onProgressUpdate(values);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+
+            salida.setText("Ha terminado la descarga");
+            boton_descarga.setText("Descarga finalizada");
+            boton_descarga.setEnabled(true);
+        }
+    }
+
 }

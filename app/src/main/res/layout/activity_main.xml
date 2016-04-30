@@ -24,4 +24,17 @@
         android:text="Iniciar reloj"
         android:onClick="mostrarMensaje"/>
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="salida"
+        android:id="@+id/salida"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Iniciar Descarga"
+        android:id="@+id/boton_descarga"
+        android:onClick="iniciarDescarga"/>
+
 </LinearLayout>
