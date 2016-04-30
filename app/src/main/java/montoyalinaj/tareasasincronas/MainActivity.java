@@ -159,10 +159,17 @@ public class MainActivity extends Activity {
         protected String doInBackground(String... params) {
             String str_url = params[0];
 
+            //Size of the file
+            int size=0;
+
             try {
                 URL url = new URL(str_url);
                 URLConnection connection = url.openConnection();
                 connection.connect();
+
+                //get the content size
+                size = connection.getContentLength();
+
                 //Receive all bytes
                 InputStream inputStream = connection.getInputStream();
 
@@ -181,8 +188,14 @@ public class MainActivity extends Activity {
                 int bytesLeidos = 0;
                 byte [] buffer = new byte[1024];
 
+                //percent progress
+                int acumulador = 0;
+
                 //Read bytes
                 while ( (bytesLeidos=inputStream.read(buffer)) != -1){
+                    acumulador += bytesLeidos;
+                    //publish percent
+                    publishProgress(""+(((double)acumulador / size)*100)+" %");
                     //write from buffer, starting on zero, to the bytes read
                     fileOutputStream.write(buffer, 0, bytesLeidos);
                 }
@@ -205,6 +218,8 @@ public class MainActivity extends Activity {
         @Override
         protected void onProgressUpdate(String... values) {
             super.onProgressUpdate(values);
+
+            salida.setText(values[0]);
         }
 
         @Override

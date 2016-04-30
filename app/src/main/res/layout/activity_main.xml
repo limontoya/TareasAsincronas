@@ -10,9 +10,17 @@
     tools:context=".MainActivity">
 
     <TextView
-        android:text="Hola"
+        android:text="Hola Lina"
         android:layout_width="match_parent"
         android:textSize="16pt"
+        android:textStyle="bold"
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
+
+    <TextView
+        android:text="Reloj"
+        android:layout_width="match_parent"
+        android:textSize="14pt"
         android:textStyle="bold"
         android:layout_height="wrap_content"
         android:gravity="center"
